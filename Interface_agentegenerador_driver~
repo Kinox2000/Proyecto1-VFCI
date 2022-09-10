@@ -1,6 +1,6 @@
 //Clase de transacción para el agente al driver
 
-typedef enum(Trans_paquete_comun, Trans_todos_a_todos, Trans_broadcast, Trans_dispsitivo_especifico, Trans_id_invalido, Trans_ceros) tipo_trans;
+typedef enum(Trans_paquete_comun, Trans_todos_a_todos, Trans_broadcast) tipo_trans;
 
 class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
 	rand int retardo;//retardo en ciclos de reloj que se debe esperar entre cada transacción
