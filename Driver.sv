@@ -1,16 +1,31 @@
 //Código para el driver
 class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 	int contador_retardo = 0;
-	Comando_Agente_Driver_mbx agente_driver_mbx;
-	trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) mensaje_agente_driver;
+	Comando_Agente_Driver_mbx agente_driver_mbx;//mailbox entre Agente/Generador al driver
+	trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) mensaje_agente_driver;//paquete de transacción entre Agente y Driver
 
 	task run();
 	forever begin
 		agente_driver_mbx.get(mensaje_agente_driver);
 		$display("Transacción recibida en el Driver")
-		while(contador_retardo<transaccion.retardo) begin
+		while(contador_retardo<transaccion.retardo) begin//Este ciclo espera a cumplir con el retardo entre paquetes
 			contador_retardo=contador_retardo+1;
 		end
+		case(transaccion.tipo)//revisa el tipo de transacción que se recibe
+			Trans_paquete_comun: begin
+			end
+			Trans_todos_a_todos: begin
+			end
+			Trans_broadcast: begin 
+			end
+			Trans_dispositivo_especifico: begin 
+			end
+			Trans_id_invalido: begin
+			end
+			Trans_ceros: begin
+			end
+
+		endcase
 	end
 
 	fifo_sim #(.pckg_size())
