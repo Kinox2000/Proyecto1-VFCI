@@ -1,27 +1,33 @@
 //en este archivo se definen los objetos de las transacciones que se van a enviar por el mailbox
 //se definen los mailboxes 
 
-typedef enum(Trans_paquete_comun, Trans_todos_a_todos, Trans_broadcast, Trans_dispsitivo_especifico, Trans_id_invalido, Trans_ceros) tipo_trans;
-typedef enum(Reporte_completo, Reporte_parcial) tipo_reporte;
+typedef enum{Trans_paquete_comun, Trans_end_2_end, Trans_broadcast, Trans_dispsitivo_especifico, Trans_id_invalido, Trans_ceros} tipo_trans;
+typedef enum{Reporte_completo, Reporte_parcial} tipo_reporte;
 
-class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
+class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}}, parameter max_retardo=5, parameter max_dispositivos=16);
 	rand int retardo;//retardo en ciclos de reloj que se debe esperar entre cada transacción
-	int max_retardo;//número que se usará para crear el constraint del retardo
+    rand int id;
+    bit [pckg_sz+7 :0] D_push;
+    rand bit [7:0] destino;
+	//int max_retardo;//número que se usará para crear el constraint del retardo
 	rand bit[pckg_sz-1:0] dato;//Este es el dato que se va a enviar a las FIFOs que se conectarán al bus
 	int tiempo;//Guarda el tiempo de simulación en el que se ejecuta la transacción
 
 	constraint const_retardo {retardo < max_retardo; retardo > 0;}//Asegura que el retardo sea un número positivo menor al retardo máximo establecido
-
-	function new(int ret = 0, int max_ret = 10, data = 0, int time = 0, tipo_trans = Trans_paquete_comun);//constructor de la clase
+    constraint const_id {id < max_dispositivos-1; id > 2;}
+    constraint const_destino {destino < max_dispositivos-1; destino > 2;}
+  
+    function new(int ret = 0, int max_ret = 10, int data = 0, tipo_trans = Trans_paquete_comun, int _id=2);//constructor de la clase
 	this.retardo = ret;
-	this.max_retardo = max_ret;
 	this.dato = data;
-	this.tiempo = time;
-	end function
+    this.id = _id;
+    this.destino = max_dispositivos;
+	this.tiempo = $time;
+	endfunction
 
-	funtion void print(string tag = "");
-		$display("Tiempo = %0t dato = 0x%0h retardo = %d", $time, data)			
-	end fuction
+    function void print (string tag = "");
+      $display("Tiempo %0t Transacciones: La Transaccion es trans_agente_driver dato = %b retardo = %g D_push %b Id %b destino %b", $time, dato, retardo, D_push, id, destino);			
+	endfunction
 endclass
 
 class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
@@ -33,19 +39,19 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 	int tiempo_recibido;
 	int flag_comprobacion;
 
-	function new(int ret = 0, data = 0, int time = 0, tipo_trans = Trans_paquete_comun, lat = 0, envio = 0, recibido = 0, comprobacion = 0);//constructor
+    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0, envio = 0, recibido = 0, comprobacion = 0);//constructor
 	this.retardo = ret;
 	this.dato = data;
-	this.tiempo = time;
-	this.latencia = lat
+	this.tiempo = _time;
+	this.latencia = lat;
 	this.tiempo_recibido = recibido;
 	this.tiempo_envio = envio;
 	this.flag_comprobacion = comprobacion;
-	end function
+	endfunction
 
-	funtion void print(string tag = "");
-		$display("Tiempo = %0t dato = 0x%0h retardo = %d" latencia = %d, $time, data, latencia)			
-	end fuction
+	function void print(string tag = "");
+      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato, retardo,latencia);			
+	endfunction
 endclass
 
 class trans_monitor_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
@@ -54,16 +60,16 @@ class trans_monitor_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}
 	int tiempo;//Guarda el tiempo de simulación en el que se ejecuta la transacción
 	int latencia;
 
-	function new(int ret = 0, data = 0, int time = 0, tipo_trans = Trans_paquete_comun, lat = 0);//constructor de la clase
+    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0);//constructor de la clase
 	this.retardo = ret;
 	this.dato = data;
-	this.tiempo = time;
-	this.latencia = lat
-	end function
+	this.tiempo = _time;
+	this.latencia = lat;
+	endfunction
 
-	funtion void print(string tag = "");
-		$display("Tiempo = %0t dato = 0x%0h retardo = %d" latencia = %d, $time, data, lat)			
-	end fuction
+	function void print(string tag = "");
+      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato, retardo,latencia);			
+	endfunction
 endclass
 // creo aliases para los mailbox parametrizados
 typedef mailbox #(tipo_trans) Comando_Test_Agente_mbx;	
