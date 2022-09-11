@@ -65,9 +65,9 @@ class trans_monitor_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}
 		$display("Tiempo = %0t dato = 0x%0h retardo = %d" latencia = %d, $time, data, lat)			
 	end fuction
 endclass
-
-typedef mailbox #(tipo_trans) Test_Agente_mbx;	
-typedef mailbox #(trans_agente_driver) Agente_Driver_mbx;
-typedef mailbox #(trans_monitor_checker) Monitor_Checker_mbx;
-typedef mailbox #(trans_checker_scoreboard) Checker_Scoreboard_mbx;	
-typedef mailbox #(tipo_reporte) Test_Scoreboard_mbx;	
+// creo aliases para los mailbox parametrizados
+typedef mailbox #(tipo_trans) Comando_Test_Agente_mbx;	
+typedef mailbox #(trans_agente_driver)  Comando_Agente_Driver_mbx;
+typedef mailbox #(trans_monitor_checker)  Comando_Monitor_Checker_mbx;
+typedef mailbox #(trans_checker_scoreboard)  Comando_Checker_Scoreboard_mbx;	
+typedef mailbox #(tipo_reporte)  Comando_Test_Scoreboard_mbx;	
