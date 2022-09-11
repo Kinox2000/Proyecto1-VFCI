@@ -7,14 +7,16 @@ class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}})
 	int max_retardo;//número que se usará para crear el constraint del retardo
 	rand bit[pckg_sz-1:0] dato;//Este es el dato que se va a enviar a las FIFOs que se conectarán al bus
 	int tiempo;//Guarda el tiempo de simulación en el que se ejecuta la transacción
+	rand tipo_trans = tipo;
 
 	constraint const_retardo {retardo < max_retardo; retardo > 0;}//Asegura que el retardo sea un número positivo menor al retardo máximo establecido
 
-	function new(int ret = 0, int max_ret = 10, data = 0, int time = 0, tipo_trans = Trans_paquete_comun);//constructor de la clase
+	function new(int ret = 0, int max_ret = 10, data = 0, int time_ = 0, tipo_trans = Trans_paquete_comun);//constructor de la clase
 	this.retardo = ret;
 	this.max_retardo = max_ret;
 	this.dato = data;
-	this.tiempo = time;
+	this.tiempo = time_;
+	this.tipo_trans = tipo;
 	end function
 
 	funtion void print(string tag = "");
