@@ -6,7 +6,7 @@ class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 
 	task run();
 	forever begin
-		fifo_sim #(.pckg_size())
+		fifo_sim #(.pckg_size(pckg_sz =16)) fifo;
 		$display("Inicia el driver");
 		trans_agente_driver #(parameter pckg_sz = 16, broadcast = {8{1'b1}}) transaccion;
 		agente_driver_mbx.get(mensaje_agente_driver);//Se recibe el paquete enviado al driver desde el agente/generador
@@ -17,7 +17,6 @@ class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 		end
 		case(mensaje_agente_driver.tipo)//revisa el tipo de transacción que se recibe
 			Trans_paquete_comun: begin
-
 			end
 			Trans_todos_a_todos: begin
 			end
@@ -28,6 +27,12 @@ class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 			Trans_id_invalido: begin
 			end
 			Trans_ceros: begin
+			end
+			Trans_reset: begin//Se limpian los datos de la FIFO
+				fifo.D_pop <= {pckg_zs{1'b0}};
+				fifo.D_push <= {pckg_zs{1'b0}};
+				fifo.pndng <= 1'b0;
+				fifo.queue_fifo.delete();
 			end
 
 		endcase
@@ -41,7 +46,7 @@ class fifo_sim #(parameter pckg_size = 16)//Clase para simular las FIFOs
 	bit D_pop[pckg_sz-1:0];//bits de entrada de la FIFO
 	bit D_pop[pckg_sz-1:0];//bits de salida de la FIFO
 	bit pndng;//bit de pending de la FIFO
-	int fifo[$]//FIFO infinita para evitar el overflow
+	int queue_fifo[$]//FIFO infinita para evitar el overflow
 endclass
 
 
