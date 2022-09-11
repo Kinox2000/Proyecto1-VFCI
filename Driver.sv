@@ -6,13 +6,18 @@ class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 
 	task run();
 	forever begin
-		agente_driver_mbx.get(mensaje_agente_driver);
+		fifo_sim #(.pckg_size())
+		$display("Inicia el driver");
+		trans_agente_driver #(parameter pckg_sz = 16, broadcast = {8{1'b1}}) transaccion;
+		agente_driver_mbx.get(mensaje_agente_driver);//Se recibe el paquete enviado al driver desde el agente/generador
 		$display("Transacción recibida en el Driver")
-		while(contador_retardo<transaccion.retardo) begin//Este ciclo espera a cumplir con el retardo entre paquetes
+
+		while(contador_retardo<mensaje_agente_driver.retardo) begin//Este ciclo espera a cumplir con el retardo entre paquetes
 			contador_retardo=contador_retardo+1;
 		end
-		case(transaccion.tipo)//revisa el tipo de transacción que se recibe
+		case(mensaje_agente_driver.tipo)//revisa el tipo de transacción que se recibe
 			Trans_paquete_comun: begin
+
 			end
 			Trans_todos_a_todos: begin
 			end
@@ -26,13 +31,7 @@ class driver #(parameter pckg_sz = 16, parameter broadcast = {8{1'b1}})
 			end
 
 		endcase
-	end
-
-	fifo_sim #(.pckg_size())
-
-		$display("Inicia el driver");
-		trans_agente_driver #(parameter pckg_sz = 16, broadcast = {8{1'b1}}) transaccion;
-		
+	end		
 	
 	endtask
 
