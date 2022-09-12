@@ -1,15 +1,22 @@
 //Código para el driver
-class driver #(parameter pckg_sz = 16, parameter drvrs = 4, max_retardo = 10, parameter broadcast = {8{1'b1}})
+//
+class fifo_sim #(parameter pckg_size = 16);
+	bit D_push [pckg_size-1:0];
+	bit D_pop [pckg_size-1:0];
+	bit pndng;
+endclass
+
+class driver #(parameter pckg_sz = 16, parameter drvrs = 4, max_retardo = 10, parameter broadcast = {8{1'b1}});
 	int contador_retardo = 0;
 	Comando_Agente_Driver_mbx agente_driver_mbx;//mailbox entre Agente/Generador al driver
 	trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) mensaje_agente_driver;//paquete de transacción entre Agente y Driver
-	class Interface_DUT #(.WITDH(pckg_sz), .MAX_RETARDO(max_retardo), .DISPOSITIVOS(drvrs)) BUS;
+	Interface_DUT #(.WITDH(pckg_sz), .MAX_RETARDO(max_retardo), .DISPOSITIVOS(drvrs)) BUS;
 
 	task run();
 	forever begin
-		fifo_sim #(.pckg_size(pckg_sz =16)) fifo;
+		fifo_sim #(.pckg_size(pckg_sz)) fifo;
 		$display("Inicia el driver");
-		trans_agente_driver #(parameter pckg_sz = 16, broadcast = {8{1'b1}}) transaccion;
+		trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast), .max_retardo(max_retardo), .max_dispositivos(drvrs)) transaccion;
 		agente_driver_mbx.get(transaccion);//Se recibe el paquete enviado al driver desde el agente/generador
 		$display("Transacción recibida en el Driver")
 
@@ -71,12 +78,6 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 4, max_retardo = 10, pa
 
 endclass
 
-class fifo_sim #(parameter pckg_size = 16)//Clase para simular las FIFOs
-	bit D_pop[pckg_sz-1:0];//bits de entrada de la FIFO
-	bit D_pop[pckg_sz-1:0];//bits de salida de la FIFO
-	bit pndng;//bit de pending de la FIFO
-	int queue_fifo[$]//FIFO infinita para evitar el overflow
-endclass
 
 
 
