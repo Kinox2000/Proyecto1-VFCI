@@ -1,7 +1,7 @@
 //en este archivo se definen los objetos de las transacciones que se van a enviar por el mailbox
 //se definen los mailboxes 
 
-typedef enum{Trans_paquete_comun, Trans_end_2_end, Trans_broadcast, Trans_dispsitivo_especifico, Trans_id_invalido, Trans_ceros} tipo_trans;
+typedef enum{Trans_paquete_comun, Trans_end_2_end, Trans_broadcast, Trans_dispsitivo_especifico, Trans_id_invalido, Trans_ceros, Trans_A} tipo_trans;
 typedef enum{Reporte_completo, Reporte_parcial} tipo_reporte;
 
 class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}}, parameter max_retardo=5, parameter max_dispositivos=16);
@@ -14,7 +14,7 @@ class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}},
 	int tiempo;//Guarda el tiempo de simulación en el que se ejecuta la transacción
 
 	constraint const_retardo {retardo < max_retardo; retardo > 0;}//Asegura que el retardo sea un número positivo menor al retardo máximo establecido
-    constraint const_id {id < max_dispositivos-1; id > 2;}
+    constraint const_id {id < max_dispositivos-1; id > 0;}
     constraint const_destino {destino < max_dispositivos-1; destino > 2;}
   
     function new(int ret = 0, int max_ret = 10, int data = 0, tipo_trans = Trans_paquete_comun, int _id=2);//constructor de la clase
@@ -26,7 +26,7 @@ class trans_agente_driver #(parameter pckg_sz=16, parameter broadcast={8{1'b1}},
 	endfunction
 
     function void print (string tag = "");
-      $display("Tiempo %0t Transacciones: La Transaccion es trans_agente_driver dato = %b retardo = %g D_push %b Id %b destino %b", $time, dato, retardo, D_push, id, destino);			
+      $display("Tiempo %0t Transacciones: La Transaccion es trans_agente_driver dato = %b retardo = %g D_push %b Id %g destino %d", $time, dato, retardo, D_push, id, destino);			
 	endfunction
 endclass
 
