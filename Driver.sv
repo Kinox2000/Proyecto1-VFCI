@@ -1,83 +1,62 @@
 //Código para el driver
 //
-class fifo_sim #(parameter pckg_size = 16);
-	bit D_push [pckg_size-1:0];
-	bit D_pop [pckg_size-1:0];
+class fifo_sim #(parameter pckg_size = 16,drvrs=4);
+    bit [pckg_size+7:0] D_push;
+    bit D_pop [pckg_size+7:0];
 	bit pndng;
+    bit [pckg_size-1:0] fifo_queue [$];
 endclass
 
 class driver #(parameter pckg_sz = 16, parameter drvrs = 4, max_retardo = 10, parameter broadcast = {8{1'b1}});
 	int contador_retardo = 0;
-	Comando_Agente_Driver_mbx agente_driver_mbx;//mailbox entre Agente/Generador al driver
-	trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) mensaje_agente_driver;//paquete de transacción entre Agente y Driver
-	Interface_DUT #(.WITDH(pckg_sz), .MAX_RETARDO(max_retardo), .DISPOSITIVOS(drvrs)) BUS;
-
+    int contador_trans=0;
+    bit [pckg_sz+7:0] dato_recibido;
+	Comando_Agente_Driver_mbx Agente_Driver_mbx;//mailbox entre Agente/Generador al driver
+  
+    trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) transaccion[drvrs-1:0];
+  
+    virtual bus_if #(.pckg_sz(pckg_sz), .drvrs(drvrs)) vif;
+    fifo_sim #(.pckg_size(pckg_sz), .drvrs(drvrs)) fifo [drvrs-1:0];
+  
 	task run();
 	forever begin
-		fifo_sim #(.pckg_size(pckg_sz)) fifo;
+        @(posedge vif.clk);
 		$display("Inicia el driver");
-		trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast), .max_retardo(max_retardo), .max_dispositivos(drvrs)) transaccion;
-		agente_driver_mbx.get(transaccion);//Se recibe el paquete enviado al driver desde el agente/generador
-		$display("Transacción recibida en el Driver")
+      for (int i=0;i<drvrs-1; i++)begin
+          transaccion[i]=new();
+          fifo[i]=new();
+          Agente_Driver_mbx.peek(transaccion[i]);
+          while(contador_retardo<transaccion[i].retardo) begin
+            contador_retardo=contador_retardo+1;
+		  end
+          if (contador_retardo==transaccion[i].retardo)begin
+            contador_retardo=0;
+          end
+          if (i==transaccion[i].id)begin
+            Agente_Driver_mbx.get(transaccion[i]);
+            $display ("Tiempo %0t Driver: se encuentra el id correcto y se obtiene la transaccion del agente", $time);
+            fifo[i].D_push=transaccion[i].D_push;
+            fifo[i].fifo_queue.push_back(fifo[i].D_push);
+            dato_recibido=fifo[i].fifo_queue.pop_front();
+            fifo[i].pndng = 1'b1;
+            if(fifo[i].pndng == 1'b1)begin
+              vif.D_push[0][i] = dato_recibido;
+		      vif.pndng[0][i] = 1'b1;
+              vif.push[0][i] = 1'b1;
+              contador_trans=contador_trans+1;
+              $display ("Tiempo %0t Driver: Se ha enviado el dato a la interfaz dato= %d contador_trans= %d",$time, vif.D_push[0][i], contador_trans);
+		    end
 
-		while(contador_retardo<transaccion.retardo) begin//Este ciclo espera a cumplir con el retardo entre paquetes
-			contador_retardo=contador_retardo+1;
-		end
-		case(mensaje_agente_driver.tipo)//revisa el tipo de transacción que se recibe
-			Trans_paquete_comun: begin
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
-			end
-			Trans_todos_a_todos: begin
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
+          end
 
-			end
-			Trans_broadcast: begin 
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
+         
+        end
 
-			end
-			Trans_dispositivo_especifico: begin 
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
-
-			end
-			Trans_id_invalido: begin
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
-
-			end
-			Trans_ceros: begin
-				fifo.D_push = transaccion.dato;//Se toma el dato para insertar en la FIFO
-				fifo.push_back(fifo.D_push);//Se inserta el dato en la FIFO
-				fifo.pndng = 1'b1;//Se pone el bit de pndng en 1
-
-			end
-			Trans_reset: begin//Se limpian los datos de la FIFO
-				fifo.D_pop <= {pckg_zs{1'b0}};
-				fifo.D_push <= {pckg_zs{1'b0}};
-				fifo.pndng <= 1'b0;
-				fifo.queue_fifo.delete();
-			end
-
-		endcase
-
-		if(fifo.pndng == 1'b1)begin
-			BUS.D_push = fifo.D_push;
-			BUS.pngng = 1'b1;
-		end
 	end		
 	
 	endtask
 
 endclass
-
 
 
 
