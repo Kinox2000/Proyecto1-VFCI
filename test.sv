@@ -11,7 +11,8 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
   
   //definir ambiente de prueba.
   ambiente #(.WIDTH(WIDTH),.MAX_RETARDO(MAX_RETARDO),.DISPOSITIVOS(DISPOSITIVOS)) ambiente_inst;
-  
+  //definicion de la interface
+  virtual bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if;
   
   function new;
   //instanciacion de los mailboxes
@@ -21,7 +22,11 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
     
     //definicion ambiente
     ambiente_inst=new();
+    ambiente_inst._if=_if;
+    
+    ambiente_inst.Test_Agente_mbx=Test_Agente_mbx;
     ambiente_inst.agente_generador_inst.Test_Agente_mbx=Test_Agente_mbx;
+
   endfunction
   
   task run;

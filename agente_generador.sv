@@ -1,5 +1,5 @@
 //agente generador version 1.0
-class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSITIVOS=16);
+class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter DISPOSITIVOS=16);
   
   
    Comando_Agente_Driver_mbx Agente_Driver_mbx; //creo el mailbox del agente al driver
@@ -29,6 +29,9 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter
            //fix falta parametrizar las transacciones, me tira un error que no entiendo
            trans_agente_driver trans_agente_driver_instancia ;
            trans_agente_driver_instancia=new;
+           trans_agente_driver_instancia.const_destino.constraint_mode(1);
+           trans_agente_driver_instancia.const_id.constraint_mode(1);
+           trans_agente_driver_instancia.const_retardo.constraint_mode(1);
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
            trans_agente_driver_instancia.print();
@@ -41,6 +44,7 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter
            //fix falta parametrizar las transacciones, me tira un error que no entiendo
            trans_agente_driver trans_agente_driver_instancia ;
            trans_agente_driver_instancia=new;
+           trans_agente_driver_instancia.const_destino.constraint_mode(0);
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.destino={8{1'b1}};
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
@@ -85,8 +89,8 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter
        endcase
      end
        //para la prueba del mailbox al driver
-     Agente_Driver_mbx.get(prueba);
-       $display ("Tiempo %0t Agente_generador: transaccion %s Resultado driver: retardo %g, id %b, dato %b, dpush %b, destino %b tiempo %0t ", $time, opcion, prueba.retardo, prueba.id, prueba.dato, prueba.D_push, prueba.destino, prueba.tiempo);
+     //Agente_Driver_mbx.peek(prueba);
+       //$display ("Tiempo %0t Agente_generador: transaccion %s Resultado driver: retardo %g, id %b, dato %b, dpush %b, destino %b tiempo %0t ", $time, opcion, prueba.retardo, prueba.id, prueba.dato, prueba.D_push, prueba.destino, prueba.tiempo);
        ///////////////////////////////////////
       
      
