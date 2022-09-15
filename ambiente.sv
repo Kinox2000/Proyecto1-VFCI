@@ -31,6 +31,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     agente_generador_inst.Test_Agente_mbx=Test_Agente_mbx;
     agente_generador_inst.Agente_Driver_mbx=Agente_Driver_mbx;
     driver_inst.Driver_Checker_mbx=Driver_Checker_mbx;
+    driver_inst.Agente_Driver_mbx=Agente_Driver_mbx;
     monitor_inst.Monitor_Checker_mbx=Monitor_Checker_mbx;
     for (int i=0;i<DISPOSITIVOS; i++)begin
       automatic int j=i;

@@ -34,14 +34,22 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
     transaccion=new();
     trans_checker=new();
     fifo[n]=new();
+    this.init(n);
+
   endfunction
+  
+  function init (int l);
+    fork
+      vif.pndng[0][l]<=0;
+      vif.D_push[0][l]<=0;
+      vif.reset<=1;
+      #2vif.reset<=0;
+    join_none
     
+  endfunction
+  
   task run;
     @(posedge vif.clk);
-    vif.pndng[0][id_hijo]=0;
-    vif.D_push[0][id_hijo]=0;
-    vif.reset=1;
-    #2vif.reset=0;
     #1
     Agente_Driver_mbx.peek(transaccion);
     if(transaccion.id==id_hijo)begin
@@ -49,6 +57,9 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
       Agente_Driver_mbx.get(transaccion);
       fifo[id_hijo].D_push=transaccion.D_push;
       fifo[id_hijo].fifo_queue.push_back(fifo[id_hijo].D_push);
+      for (int w=0; w<transaccion.retardo; w++)begin
+        #1 $display("Driver:wait");
+      end
       fifo[id_hijo].update();
       vif.D_pop[0][id_hijo] =fifo[id_hijo].fifo_queue.pop_front();
       vif.pndng[0][id_hijo] = fifo[id_hijo].pndng;
@@ -71,6 +82,7 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
 
   driver_hijo #(.pckg_sz(pckg_sz), .broadcast(broadcast), .drvrs(drvrs)) driver_hijo_ [drvrs-1:0];
   Comando_Driver_Checker_mbx Driver_Checker_mbx;
+  Comando_Agente_Driver_mbx Agente_Driver_mbx;
   
   //se crean los hijos
   function new;
@@ -85,11 +97,15 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
     $display("Tiempo %0t Driver: Inicia el driver_padre", $time);
     forever begin
       #1
+      $display("Tiempo %0t Driver: faltan trans %g", $time, Driver_Checker_mbx.num());
       for (int i=0;i<drvrs; i++)begin
         automatic int j;
         j=i;
         driver_hijo_[j].run();
       end
+
+        
+
     end
   endtask
   
