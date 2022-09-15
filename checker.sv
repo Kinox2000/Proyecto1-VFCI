@@ -21,6 +21,9 @@ class Checker #(parameter pckg_sz = 16);
                   Driver_Checker_mbx.get(trans_driver);//Se espera la transacción con el dato proveniente del driver
                   Monitor_Checker_mbx.get(trans_monitor);
                   $display("Se recibió una transacción proveniente del monitor");//Se espera para obtener el dato proveniente del monitor
+                  
+                  ->mensaje_checker; $display("Se levanta el evento");
+                  
                   $display("Checker: Se recibió una transacción proveniente del driver");
                   //$display("Broadcast, [%b]", trans_driver.dato[pckg_sz+7:pckg_sz]);
                   $display("Dato, [%b]", trans_driver.dato);
