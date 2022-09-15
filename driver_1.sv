@@ -31,7 +31,6 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
   
   function new(int n);
     this.id_hijo=n;
-    Driver_Checker_mbx=new();
     transaccion=new();
     trans_checker=new();
     fifo[n]=new();
@@ -58,6 +57,7 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
       trans_checker.dato=vif.D_pop[0][id_hijo];
       trans_checker.id=id_hijo;
       trans_checker.tiempo_envio=$time;
+      Driver_Checker_mbx.put(trans_checker);
       $display ("Tiempo %0t Driver: Se ha enviado la transaccion al checker dato= %b id= %b",$time, trans_checker.dato, trans_checker.id);
     end
     
@@ -70,9 +70,11 @@ endclass
 class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, parameter broadcast = {8{1'b1}});
 
   driver_hijo #(.pckg_sz(pckg_sz), .broadcast(broadcast), .drvrs(drvrs)) driver_hijo_ [drvrs-1:0];
+  Comando_Driver_Checker_mbx Driver_Checker_mbx;
   
   //se crean los hijos
   function new;
+    Driver_Checker_mbx=new();
     for (int i=0;i<drvrs; i++)begin
       automatic int j=i;
       driver_hijo_[j]=new(i);
