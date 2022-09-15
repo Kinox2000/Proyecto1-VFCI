@@ -82,9 +82,9 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
   endfunction
 
   task run();
+    $display("Tiempo %0t Driver: Inicia el driver_padre", $time);
     forever begin
       #1
-      $display("Tiempo %0t Driver: Inicia el driver_padre", $time);
       for (int i=0;i<drvrs; i++)begin
         automatic int j;
         j=i;
