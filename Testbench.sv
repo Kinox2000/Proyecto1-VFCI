@@ -5,7 +5,7 @@
 `include "transacciones.sv"
 `include "agente_generador.sv"
 `include "driver_1.sv"
-//`include "monitor.sv"
+`include "monitor_1.sv"
 `include "ambiente.sv"
 `include "test.sv"
 
@@ -18,11 +18,11 @@ module test_bench;
   
   test #(.WIDTH(WIDTH), .DISPOSITIVOS(DISPOSITIVOS), .MAX_RETARDO(MAX_RETARDO)) test_inst;
   
-  
-  
-  always #5 clk =~clk;
-  
   bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if( .clk(clk));
+  
+  always #10 clk =~clk;
+  
+  
   
   bs_gnrtr_n_rbtr #(.pckg_sz(WIDTH+8), .drvrs(DISPOSITIVOS)) uut (.clk(_if.clk), .reset(_if.reset), .pndng(_if.pndng), .push(_if.push), .pop(_if.pop),.D_pop(_if.D_pop), .D_push(_if.D_push) );
   
@@ -33,7 +33,7 @@ module test_bench;
     for (int i=0;i<DISPOSITIVOS; i++)begin
       automatic int j=i;
       test_inst.ambiente_inst.driver_inst.driver_hijo_[j].vif=_if;
-      //test_inst.ambiente_inst.monitor_inst.vif=_if;
+      test_inst.ambiente_inst.monitor_inst.monitor_hijo_[j].vif=_if;
       
     end
     
@@ -44,7 +44,7 @@ module test_bench;
 
   end
   always@(posedge clk) begin
-    if($time> 100000000) begin
+    if($time> 10000000000) begin
       $display("Timeout");
       $finish; 
     end
