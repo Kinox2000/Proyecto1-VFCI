@@ -33,13 +33,11 @@ class monitor #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, 
           
           wait (vif.push[0][j] == 1'b1);
         end  
-        #1
+        
         if (vif.push[0][j] == 1)begin
+            
           transaccion_mointor[j].dato=vif.D_push[0][j];
           transaccion_mointor[j].tiempo_recibido= $time;
-          Monitor_Checker_mbx.put(transaccion_mointor[j]);
-          //wait(mensaje_checker.triggered);
-          
           $display("Time %0t Monitor: Obtiene dato %d del bus al tiempo recibido %0t ",$time, transaccion_mointor[j].dato, transaccion_mointor[j].tiempo_recibido );
         end
             

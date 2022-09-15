@@ -4,13 +4,10 @@
 `include "DUT.sv"
 `include "transacciones.sv"
 `include "agente_generador.sv"
-`include "driver.sv"
-`include "monitor.sv"
-`include "checker.sv"
+`include "driver_1.sv"
+//`include "monitor.sv"
 `include "ambiente.sv"
 `include "test.sv"
-
-event mensaje_checker;
 
 
 module test_bench;
@@ -33,8 +30,13 @@ module test_bench;
     clk=0;
     test_inst=new();
     test_inst._if=_if;
-    test_inst.ambiente_inst.driver_inst.vif=_if;
-    test_inst.ambiente_inst.monitor_inst.vif=_if;
+    for (int i=0;i<DISPOSITIVOS; i++)begin
+      automatic int j=i;
+      test_inst.ambiente_inst.driver_inst.driver_hijo_[j].vif=_if;
+      //test_inst.ambiente_inst.monitor_inst.vif=_if;
+      
+    end
+    
 
     fork
       test_inst.run();
@@ -42,7 +44,7 @@ module test_bench;
 
   end
   always@(posedge clk) begin
-    if($time> 200000000) begin
+    if($time> 100000000) begin
       $display("Timeout");
       $finish; 
     end

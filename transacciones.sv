@@ -87,11 +87,13 @@ endclass
 class trans_driver_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
     bit[pckg_sz+7:0] dato;//Este es el dato que se envió a las FIFOs
 	int tiempo_envio;//Guarda el tiempo de simulación en el que se ejecuta la transacción
+    int id;
 
 
-    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0);//constructor de la clase
+    function new(int id_ = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, trans = 0);//constructor de la clase
 	this.dato = data;
 	this.tiempo_envio = $time;
+    this.id=id_;
 	endfunction
 
 	function void print(string tag = "");
