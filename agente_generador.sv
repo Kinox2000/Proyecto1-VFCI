@@ -5,15 +5,17 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
    Comando_Agente_Driver_mbx Agente_Driver_mbx; //creo el mailbox del agente al driver
    Comando_Test_Agente_mbx Test_Agente_mbx; // mailbox del test al agente creado en el test
    tipo_trans opcion; // defino el tipo que es opcion
-  
+   trans_agente_driver #(.pckg_sz(WIDTH), .max_dispositivos(DISPOSITIVOS), .dispositivos(DISPOSITIVOS),.max_retardo(MAX_RETARDO) ) trans_agente_driver_instancia ;
    //prueba para ver el mailbox del agente al driver
-   trans_agente_driver prueba;
+   trans_agente_driver trans_agente_driver_inst;
    /////////////////////////////////////////////////
   
   
    function new;
   //instanciacion de los mailboxes
      Agente_Driver_mbx=new();
+     trans_agente_driver_instancia=new();
+     trans_agente_driver_inst=new();
    endfunction
 
    // fix falta aleatorizar el numero de transacciones
@@ -27,66 +29,66 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
          Trans_paquete_comun: begin
            //creo el tipo de transaccion 
            //fix falta parametrizar las transacciones, me tira un error que no entiendo
-           trans_agente_driver trans_agente_driver_instancia ;
-           trans_agente_driver_instancia=new;
+           
+           trans_agente_driver_instancia.const_unique.constraint_mode(1);
            trans_agente_driver_instancia.const_destino.constraint_mode(1);
            trans_agente_driver_instancia.const_id.constraint_mode(1);
            trans_agente_driver_instancia.const_retardo.constraint_mode(1);
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
+           trans_agente_driver_instancia.tiempo=$time;
            trans_agente_driver_instancia.print();
            //envio por el mailbox
-           Agente_Driver_mbx.put(trans_agente_driver_instancia);
+           
            $display ("Tiempo %0t Agente_generador: transaccion %s ", $time, opcion );
          end
          Trans_broadcast: begin
            //creo el tipo de transaccion 
            //fix falta parametrizar las transacciones, me tira un error que no entiendo
-           trans_agente_driver trans_agente_driver_instancia ;
-           trans_agente_driver_instancia=new;
            trans_agente_driver_instancia.const_destino.constraint_mode(0);
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.destino={8{1'b1}};
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
            trans_agente_driver_instancia.print();
-           Agente_Driver_mbx.put(trans_agente_driver_instancia);
+           //Agente_Driver_mbx.put(trans_agente_driver_instancia);
            $display ("Tiempo %0t Agente_generador: transaccion %s ", $time, opcion );
          end
          Trans_id_invalido: begin
-           trans_agente_driver trans_agente_driver_instancia ;
-           trans_agente_driver_instancia=new;
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.const_destino.constraint_mode(0);
            trans_agente_driver_instancia.destino=DISPOSITIVOS+trans_agente_driver_instancia.id;
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
            trans_agente_driver_instancia.print();
-           Agente_Driver_mbx.put(trans_agente_driver_instancia);
+           //Agente_Driver_mbx.put(trans_agente_driver_instancia);
            $display ("Tiempo %0t Agente_generador: transaccion %s ", $time, opcion );
          end
          Trans_ceros: begin
-           trans_agente_driver trans_agente_driver_instancia ;
-           trans_agente_driver_instancia=new;
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.dato={WIDTH{1'b0}};
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
            trans_agente_driver_instancia.print();
            //envio por el mailbox
-           Agente_Driver_mbx.put(trans_agente_driver_instancia);
+           //Agente_Driver_mbx.put(trans_agente_driver_instancia);
            $display ("Tiempo %0t Agente_generador: transaccion %s ", $time, opcion );
          end
          Trans_A: begin
-           trans_agente_driver trans_agente_driver_instancia ;
-           trans_agente_driver_instancia=new;
            trans_agente_driver_instancia.randomize();
            trans_agente_driver_instancia.dato={WIDTH{4'b1010}};
            trans_agente_driver_instancia.D_push={trans_agente_driver_instancia.destino,trans_agente_driver_instancia.dato};
            trans_agente_driver_instancia.print();
            //envio por el mailbox
-           Agente_Driver_mbx.put(trans_agente_driver_instancia);
+           //Agente_Driver_mbx.put(trans_agente_driver_instancia);
            $display ("Tiempo %0t Agente_generador: transaccion %s ", $time, opcion );
          end
 
        endcase
+       trans_agente_driver_inst.D_push=trans_agente_driver_instancia.D_push;
+       trans_agente_driver_inst.id=trans_agente_driver_instancia.id;
+       trans_agente_driver_inst.destino=trans_agente_driver_instancia.destino;
+       trans_agente_driver_inst.dato=trans_agente_driver_instancia.dato;
+       trans_agente_driver_inst.retardo=trans_agente_driver_instancia.retardo;
+       trans_agente_driver_inst.tiempo=trans_agente_driver_instancia.tiempo;
+       Agente_Driver_mbx.put(trans_agente_driver_inst);
      end
        //para la prueba del mailbox al driver
      //Agente_Driver_mbx.peek(prueba);

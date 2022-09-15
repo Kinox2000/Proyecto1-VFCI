@@ -24,7 +24,7 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
   Comando_Agente_Driver_mbx Agente_Driver_mbx;//mailbox entre Agente/Generador al driver
   Comando_Driver_Checker_mbx Driver_Checker_mbx;
   
-  trans_agente_driver #(.pckg_sz(pckg_sz), .broadcast(broadcast)) transaccion;
+  trans_agente_driver #(.pckg_sz(pckg_sz)) transaccion;
   trans_driver_checker#(.pckg_sz(pckg_sz), .broadcast(broadcast)) trans_checker;
   
   int id_hijo;
