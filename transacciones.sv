@@ -67,20 +67,20 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 endclass
 
 class trans_monitor_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
-	int retardo;//retardo en ciclos de reloj que se debe esperar entre cada transacción
+	int destino;//retardo en ciclos de reloj que se debe esperar entre cada transacción
     bit[pckg_sz+7:0] dato;//Este es el dato que se envió a las FIFOs
 	int tiempo_recibido;//Guarda el tiempo de simulación en el que se ejecuta la transacción
 	int latencia;
 
-    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0);//constructor de la clase
-	this.retardo = ret;
+  function new(int des = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0);//constructor de la clase
+	this.destino = des;
 	this.dato = data;
 	this.tiempo_recibido = $time;
 	this.latencia = lat;
 	endfunction
 
 	function void print(string tag = "");
-      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato, retardo,latencia);			
+      $display("Tiempo = %0t dato = 0x%0h destino = %d latencia = %d", $time, dato, destino,latencia);			
 	endfunction
 endclass
 

@@ -35,7 +35,7 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
       ambiente_inst.run();
     join_none
     
-    trans_elegida = Trans_broadcast;
+    trans_elegida = Trans_paquete_comun;
     Test_Agente_mbx.put(trans_elegida);
     $display("Tiempo %0t Test: Se envia la primera instruccion al agente_generador-> trans_elegida= %s",$time, trans_elegida);
 
@@ -43,7 +43,7 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
     Test_Scoreboard_mbx.put(rep_elegido);
     $display("Tiempo %0t Test: Se envia la segunda instruccion al agente_scoreboard-> rep_elegido= %s",$time, rep_elegido);
 
-    #1500000
+    #150000
 
     $finish;
 
