@@ -1,6 +1,7 @@
 //Código para el checker
-//Prueba
-//Prueba
+//
+//
+//
 class Checker #(parameter pckg_sz = 16);
         trans_driver_checker #(.pckg_sz(pckg_sz)) trans_driver;//Transacción recibidad en el mailbox
         Comando_Driver_Checker_mbx Driver_Checker_mbx;//Mailbox entre el driver y el checker
