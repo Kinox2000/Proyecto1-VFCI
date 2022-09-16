@@ -6,6 +6,7 @@
 `include "agente_generador.sv"
 `include "driver_1.sv"
 `include "monitor_1.sv"
+`include "checker.sv"
 `include "ambiente.sv"
 `include "test.sv"
 
