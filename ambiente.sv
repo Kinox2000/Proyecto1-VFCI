@@ -4,6 +4,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
   agente_generador #(.WIDTH(WIDTH),.MAX_RETARDO(MAX_RETARDO),.DISPOSITIVOS(DISPOSITIVOS)) agente_generador_inst;
   driver #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) driver_inst;
   monitor #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) monitor_inst;
+  Checker #(.pckg_sz(WIDTH))checker_inst;
   
   virtual bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if;
   
@@ -27,12 +28,15 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     agente_generador_inst= new();
     driver_inst =new();
     monitor_inst=new();
+    checker_inst=new();
     //conexion interfaces y mailboxes en el ambiente
     agente_generador_inst.Test_Agente_mbx=Test_Agente_mbx;
     agente_generador_inst.Agente_Driver_mbx=Agente_Driver_mbx;
     driver_inst.Driver_Checker_mbx=Driver_Checker_mbx;
     driver_inst.Agente_Driver_mbx=Agente_Driver_mbx;
     monitor_inst.Monitor_Checker_mbx=Monitor_Checker_mbx;
+    checker_inst.Monitor_Checker_mbx=Monitor_Checker_mbx;
+    checker_inst.Driver_Checker_mbx=Driver_Checker_mbx;
     for (int i=0;i<DISPOSITIVOS; i++)begin
       automatic int j=i;
       driver_inst.driver_hijo_[j].Agente_Driver_mbx=Agente_Driver_mbx;
@@ -54,6 +58,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
       agente_generador_inst.run();
       driver_inst.run();
       monitor_inst.run();
+      checker_inst.run();
     join_none
   endtask
   
