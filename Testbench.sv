@@ -4,7 +4,7 @@
 `include "DUT.sv"
 `include "transacciones.sv"
 `include "agente_generador.sv"
-`include "driver_1.sv"
+`include "driver_(hijos).sv"
 `include "monitor_1.sv"
 `include "checker.sv"
 `include "ambiente.sv"
