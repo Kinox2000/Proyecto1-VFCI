@@ -84,9 +84,24 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
   driver_hijo #(.pckg_sz(pckg_sz), .broadcast(broadcast), .drvrs(drvrs)) driver_hijo_ [drvrs-1:0];
   Comando_Driver_Checker_mbx Driver_Checker_mbx;
   Comando_Agente_Driver_mbx Agente_Driver_mbx;
-  
+
+  //código para hacer correr a los hijos con un fork join_none
+  task run();
+	  Driver_Checker_mbx=new();
+	  fork
+	  begin 
+		  for(int i = 0; i < drvs; i++)begin
+			  automatic int j = i;
+			  driver_hijo_[j] = new(j);
+			  driver_hijo_[j].run();
+		  end
+	  end
+	  join_none 
+  end task
+  //fin del código 
+
   //se crean los hijos
-  function new;
+  /*function new;
     Driver_Checker_mbx=new();
     for (int i=0;i<drvrs; i++)begin
       automatic int j=i;
@@ -104,11 +119,8 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
         j=i;
         driver_hijo_[j].run();
       end
-
-        
-
     end
-  endtask
+  endtask*/
   
   
 endclass
