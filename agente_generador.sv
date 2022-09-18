@@ -1,27 +1,25 @@
 //agente generador version 1.0
 class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter DISPOSITIVOS=16);
-  
-  
    Comando_Agente_Driver_mbx Agente_Driver_mbx; //creo el mailbox del agente al driver
    Comando_Test_Agente_mbx Test_Agente_mbx; // mailbox del test al agente creado en el test
    tipo_trans opcion; // defino el tipo que es opcion
    trans_agente_driver #(.pckg_sz(WIDTH), .max_dispositivos(DISPOSITIVOS), .dispositivos(DISPOSITIVOS),.max_retardo(MAX_RETARDO) ) trans_agente_driver_instancia ;
-   //prueba para ver el mailbox del agente al driver
-   trans_agente_driver trans_agente_driver_inst [4:0];
-   /////////////////////////////////////////////////
-  //int num_trans $urandom_range(4); 
+   rand int num_trans;//Variable aleatoria que determina el número de transacciones que se realizarán
+  constraint const_num {num_trans < 200; num_trans > 0;}//Se asegura que el número de transacciones sea mayor a 0 y menor a 200
   
-   function new;
+  function new();
   //instanciacion de los mailboxes
      Agente_Driver_mbx=new();
-     trans_agente_driver_instancia=new();
-     for (int i=0;i<5; i++)begin
+    trans_agente_driver_instancia=new();
+    for (int i=0;i<200; i++)begin//fix no sé por qué no permite poner num_trans aquí
        trans_agente_driver_inst[i]=new();
      end
-     
    endfunction
-
-   // fix falta aleatorizar el numero de transacciones
+  
+  //prueba para ver el mailbox del agente al driver
+  trans_agente_driver trans_agente_driver_inst [200:0];//fix no sé por qué no permite poner num_trans aquí, pero 200 es el número maximo de transacciones, entonces siempre va a funcionar, pero se consumen recursos innecesariamente 
+  
+   
    task run;
      forever begin 
      #1
@@ -30,7 +28,8 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
        Test_Agente_mbx.get(opcion);
        case(opcion)
          Trans_paquete_comun: begin
-           for (int i=0;i<5; i++)begin
+           for (int i=0;i<num_trans; i++)begin
+             $display("Transacción: %d", i);
              //creo el tipo de transaccion 
              //fix falta parametrizar las transacciones, me tira un error que no entiendo
              

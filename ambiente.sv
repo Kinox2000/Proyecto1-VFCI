@@ -1,14 +1,11 @@
 class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSITIVOS=16);
-  
   //se definen los componentes de ambiente
   agente_generador #(.WIDTH(WIDTH),.MAX_RETARDO(MAX_RETARDO),.DISPOSITIVOS(DISPOSITIVOS)) agente_generador_inst;
   driver #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) driver_inst;
   monitor #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) monitor_inst;
   Checker #(.pckg_sz(WIDTH))checker_inst;
   
-  virtual bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if;
-  
-  //declaracion de la interface del DUT
+  virtual bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if;//declaracion de la interface del DUT
   
   
   //creacion mailboxes
@@ -26,6 +23,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     Driver_Checker_mbx =new();
     //instanciacion componentes de ambiente
     agente_generador_inst= new();
+    agente_generador_inst.randomize();
     driver_inst =new();
     monitor_inst=new();
     checker_inst=new();
@@ -63,3 +61,4 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
   endtask
   
 endclass
+
