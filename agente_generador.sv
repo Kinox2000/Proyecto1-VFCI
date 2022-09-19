@@ -2,8 +2,10 @@
 class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter DISPOSITIVOS=16);
    Comando_Agente_Driver_mbx Agente_Driver_mbx; //creo el mailbox del agente al driver
    Comando_Test_Agente_mbx Test_Agente_mbx; // mailbox del test al agente creado en el test
+   Comando_Agente_Checker_mbx Agente_Checker_mbx;
    tipo_trans opcion; // defino el tipo que es opcion
    trans_agente_driver #(.pckg_sz(WIDTH), .max_dispositivos(DISPOSITIVOS), .dispositivos(DISPOSITIVOS),.max_retardo(MAX_RETARDO) ) trans_agente_driver_instancia ;
+   trans_agente_checker trans_agente_checker_inst;
    rand int num_trans;//Variable aleatoria que determina el número de transacciones que se realizarán
   constraint const_num {num_trans < 200; num_trans > 0;}//Se asegura que el número de transacciones sea mayor a 0 y menor a 200
   
@@ -11,6 +13,7 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
   //instanciacion de los mailboxes
      Agente_Driver_mbx=new();
     trans_agente_driver_instancia=new();
+    trans_agente_checker_inst = new();
     for (int i=0;i<200; i++)begin//fix no sé por qué no permite poner num_trans aquí
        trans_agente_driver_inst[i]=new();
      end
@@ -23,8 +26,13 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
    task run;
      forever begin 
      #1
+     
+     trans_agente_checker_inst.num_trans = num_trans;
+     Agente_Checker_mbx.put(trans_agente_checker_inst);
+     
      if (Test_Agente_mbx.num() > 0) begin
        $display ("Tiempo %0t Agente_generador: se recibe una instruccion", $time);
+       $display ("Agente: Número de transacciones: ", num_trans);
        Test_Agente_mbx.get(opcion);
        case(opcion)
          Trans_paquete_comun: begin

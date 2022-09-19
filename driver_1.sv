@@ -58,7 +58,7 @@ class driver_hijo #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 
       fifo[id_hijo].D_push=transaccion.D_push;
       fifo[id_hijo].fifo_queue.push_back(fifo[id_hijo].D_push);
       for (int w=0; w<transaccion.retardo; w++)begin
-        #1 $display("Driver:wait");
+        #1 $display("        ");
       end
       fifo[id_hijo].update();
       vif.D_pop[0][id_hijo] =fifo[id_hijo].fifo_queue.pop_front();

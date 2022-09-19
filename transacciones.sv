@@ -15,6 +15,12 @@ interface bus_if #(parameter pckg_sz= 16, parameter drvrs= 4, parameter bits=1, 
   
 endinterface
 
+class trans_agente_checker;
+  int num_trans;
+  function new(int num = 200);
+    this.num_trans = num;
+  endfunction
+endclass
 
 class trans_agente_driver #(parameter pckg_sz=16, parameter max_retardo=10, parameter max_dispositivos=16, parameter dispositivos=16);
   
@@ -104,6 +110,7 @@ class trans_driver_checker #(parameter pckg_sz=16, parameter broadcast={8{1'b1}}
 	endfunction
 endclass
 // creo aliases para los mailbox parametrizados
+typedef mailbox #(trans_agente_checker) Comando_Agente_Checker_mbx;
 typedef mailbox #(tipo_trans) Comando_Test_Agente_mbx;	
 typedef mailbox #(trans_agente_driver)  Comando_Agente_Driver_mbx;
 typedef mailbox #(trans_driver_checker)  Comando_Driver_Checker_mbx;	

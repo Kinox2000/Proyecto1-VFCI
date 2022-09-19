@@ -14,6 +14,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
   Comando_Test_Scoreboard_mbx Test_Scoreboard_mbx; //test scoreboard
   Comando_Monitor_Checker_mbx Monitor_Checker_mbx; // monitor checker
   Comando_Driver_Checker_mbx Driver_Checker_mbx;
+  Comando_Agente_Checker_mbx Agente_Checker_mbx;
   function new();
     //instanciacion mailboxes
     Test_Agente_mbx =new();
@@ -21,6 +22,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     Test_Scoreboard_mbx= new();
     Monitor_Checker_mbx =new();
     Driver_Checker_mbx =new();
+    Agente_Checker_mbx =new();
     //instanciacion componentes de ambiente
     agente_generador_inst= new();
     agente_generador_inst.randomize();
@@ -30,11 +32,13 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     //conexion interfaces y mailboxes en el ambiente
     agente_generador_inst.Test_Agente_mbx=Test_Agente_mbx;
     agente_generador_inst.Agente_Driver_mbx=Agente_Driver_mbx;
+    agente_generador_inst.Agente_Checker_mbx=Agente_Checker_mbx;
     driver_inst.Driver_Checker_mbx=Driver_Checker_mbx;
     driver_inst.Agente_Driver_mbx=Agente_Driver_mbx;
     monitor_inst.Monitor_Checker_mbx=Monitor_Checker_mbx;
     checker_inst.Monitor_Checker_mbx=Monitor_Checker_mbx;
     checker_inst.Driver_Checker_mbx=Driver_Checker_mbx;
+    checker_inst.Agente_Checker_mbx=Agente_Checker_mbx;
     for (int i=0;i<DISPOSITIVOS; i++)begin
       automatic int j=i;
       driver_inst.driver_hijo_[j].Agente_Driver_mbx=Agente_Driver_mbx;
@@ -61,4 +65,3 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
   endtask
   
 endclass
-
