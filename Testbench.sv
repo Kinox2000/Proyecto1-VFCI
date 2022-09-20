@@ -9,6 +9,7 @@
 `include "driver_1.sv"
 `include "monitor_1.sv"
 `include "checker.sv"
+`include "Scoreboard.sv"
 `include "ambiente.sv"
 `include "test.sv"
 

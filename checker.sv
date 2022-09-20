@@ -3,16 +3,17 @@
 //
 //
 class Checker #(parameter pckg_sz = 16);
-        trans_driver_checker #(.pckg_sz(pckg_sz)) trans_driver;//Transacción recibidad en el mailbox
+  trans_driver_checker #(.pckg_sz(pckg_sz)) trans_driver;//Transacción que llega al mailbox entre el driver y el checker
         Comando_Driver_Checker_mbx Driver_Checker_mbx;//Mailbox entre el driver y el checker
-  		trans_agente_checker trans_agente;
-  		Comando_Agente_Checker_mbx Agente_Checker_mbx;
   
-        Comando_Checker_Scoreboard_mbx Checker_Scoreboard_mbx;
-        trans_checker_scoreboard transaccion_enviada_sb;
+  		trans_agente_checker trans_agente;//Transacción que llega al mailbox entre agente/generador y el checker
+  		Comando_Agente_Checker_mbx Agente_Checker_mbx;//Mailbox entre agente/generador y el checker
+  
+        Comando_Checker_Scoreboard_mbx Checker_Scoreboard_mbx;//Mailbox entre el checker y el scoreboard
+        trans_checker_scoreboard transaccion_enviada_sb;//Transacción que llega al mailbox entre el checker y el scoreboard
 
-        trans_monitor_checker#(.pckg_sz(pckg_sz)) trans_monitor;
-        Comando_Monitor_Checker_mbx Monitor_Checker_mbx;
+        trans_monitor_checker#(.pckg_sz(pckg_sz)) trans_monitor;//Transacción que llega al mailbox entre el monitor y el scoreboard
+        Comando_Monitor_Checker_mbx Monitor_Checker_mbx;//Mailbox entre el monitor y el scoreboard
   
         trans_monitor_checker #(.pckg_sz(pckg_sz)) trans_monitor_aux[$];
         trans_driver_checker #(.pckg_sz(pckg_sz)) trans_driver_aux[$];
@@ -76,6 +77,7 @@ class Checker #(parameter pckg_sz = 16);
                       trans_monitor_aux.pop_front();
                       contador = contador+1;
                       Checker_Scoreboard_mbx.put(transaccion_enviada_sb);
+                      $display("Checker: Transacción enviada al Scoreboard");
                     end
                   end 
                   
@@ -93,15 +95,13 @@ class Checker #(parameter pckg_sz = 16);
                       	$display("-------------------------------------------------------------------------------------------------------");
                     	$display("-------------------------------------------------------------------------------------------------------");
                     	$display("-------------------------------------------------------------------------------------------------------");
-                      $display("------------------------------Las transacciones NO se hicieron correctamente------------------------------");
+                        $display("----------------------------Las transacciones NO se hicieron correctamente-----------------------------");
                     	$display("-------------------------------------------------------------------------------------------------------");
                     	$display("-------------------------------------------------------------------------------------------------------");
                     	$display("-------------------------------------------------------------------------------------------------------");
                     end
                     done=1;
-
-                  end
-                  
+                  end                  
                 end	
         endtask
 endclass

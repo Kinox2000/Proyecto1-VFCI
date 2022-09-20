@@ -102,12 +102,7 @@ class driver #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, p
         automatic int j;
         j=i;
         driver_hijo_[j].run();
-      end
-
-        
-
+      end      
     end
-  endtask
-  
-  
+  endtask 
 endclass

@@ -35,9 +35,9 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
       ambiente_inst.run();
     join_none
     
-    //trans_elegida = Trans_paquete_comun;
+    trans_elegida = Trans_paquete_comun;
     //trans_elegida = Trans_broadcast;
-    trans_elegida = Trans_broadcast;
+    //trans_elegida = Trans_broadcast;
     
     Test_Agente_mbx.put(trans_elegida);//Se envía la trasacción al agente/generador
     $display("Tiempo %0t Test: Se envia la primera instruccion al agente_generador-> trans_elegida= %s",$time, trans_elegida);

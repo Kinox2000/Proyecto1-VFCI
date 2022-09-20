@@ -73,7 +73,7 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 	endfunction
 
 	function void print(string tag = "");
-      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato_enviado, retardo,latencia);			
+      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, this.dato_enviado, this.retardo, this.latencia);			
 	endfunction
 endclass
 

@@ -10,10 +10,8 @@ class fifo_sim_monitor #(parameter pckg_size = 16,drvrs=4);
       if (fifo_queue.size>0)begin
         pndng=1;
       end else begin 
-        pndng=0;
-        
-      end
-      
+        pndng=0;        
+      end      
     endtask
 endclass
 
@@ -66,13 +64,9 @@ class monitor_hijo  #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo 
       transaccion_monitor.tiempo_recibido=$time;
       Monitor_Checker_mbx.put(transaccion_monitor);      
       $display("Tiempo %0t Monitor: Se envia transaccion al checker Dato %d, Destino", $time, transaccion_monitor.dato, transaccion_monitor.destino);
-      vif.pndng[0][id_hijo_monitor]<=1;
-      
-    end
-    
-  endtask
-  
-  
+      vif.pndng[0][id_hijo_monitor]<=1;      
+    end    
+  endtask  
 endclass
 
 class monitor #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, parameter broadcast = {8{1'b1}});
@@ -94,11 +88,7 @@ class monitor #(parameter pckg_sz = 16, parameter drvrs = 16, max_retardo = 10, 
       for (int i=0;i<drvrs; i++)begin
         automatic int j=i;
         monitor_hijo_[j].run();
-      end
-      
-    end
-    
-  endtask
-  
-  
+      end      
+    end    
+  endtask  
 endclass

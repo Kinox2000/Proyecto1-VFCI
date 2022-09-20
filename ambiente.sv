@@ -4,6 +4,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
   driver #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) driver_inst;
   monitor #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS), .max_retardo(MAX_RETARDO)) monitor_inst;
   Checker #(.pckg_sz(WIDTH))checker_inst;
+  scoreboard #(.WIDTH(WIDTH), .MAX_RETARDO(MAX_RETARDO), .DISPOSITIVOS(DISPOSITIVOS)) scoreboard_inst;
   
   virtual bus_if #(.pckg_sz(WIDTH), .drvrs(DISPOSITIVOS)) _if;//declaracion de la interface del DUT
   
@@ -31,6 +32,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     driver_inst =new();
     monitor_inst=new();
     checker_inst=new();
+    scoreboard_inst=new();
     //conexion interfaces y mailboxes en el ambiente
     agente_generador_inst.Test_Agente_mbx=Test_Agente_mbx;
     agente_generador_inst.Agente_Driver_mbx=Agente_Driver_mbx;
@@ -42,6 +44,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
     checker_inst.Driver_Checker_mbx=Driver_Checker_mbx;
     checker_inst.Agente_Checker_mbx=Agente_Checker_mbx;
     checker_inst.Checker_Scoreboard_mbx=Checker_Scoreboard_mbx;
+    scoreboard_inst.Checker_Scoreboard_mbx=Checker_Scoreboard_mbx;
     for (int i=0;i<DISPOSITIVOS; i++)begin
       automatic int j=i;
       driver_inst.driver_hijo_[j].Agente_Driver_mbx=Agente_Driver_mbx;
@@ -64,6 +67,7 @@ class ambiente #(parameter WIDTH = 16,parameter MAX_RETARDO=10,parameter DISPOSI
       driver_inst.run();
       monitor_inst.run();
       checker_inst.run();
+      scoreboard_inst.run();
     join_none
   endtask
   
