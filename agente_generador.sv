@@ -7,7 +7,7 @@ class agente_generador #(parameter WIDTH = 16,parameter MAX_RETARDO=5,parameter 
    trans_agente_driver #(.pckg_sz(WIDTH), .max_dispositivos(DISPOSITIVOS), .dispositivos(DISPOSITIVOS),.max_retardo(MAX_RETARDO) ) trans_agente_driver_instancia ;
    trans_agente_checker trans_agente_checker_inst;
    rand int num_trans;//Variable aleatoria que determina el número de transacciones que se realizarán
-  constraint const_num {num_trans < 200; num_trans > 0;}//Se asegura que el número de transacciones sea mayor a 0 y menor a 200
+  constraint const_num {num_trans < 100; num_trans > 0;}//Se asegura que el número de transacciones sea mayor a 0 y menor a 200
   
   function new();
   //instanciacion de los mailboxes

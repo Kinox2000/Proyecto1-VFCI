@@ -37,7 +37,7 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
     
     //trans_elegida = Trans_paquete_comun;
     //trans_elegida = Trans_broadcast;
-    trans_elegida = Trans_ceros;
+    trans_elegida = Trans_broadcast;
     
     Test_Agente_mbx.put(trans_elegida);//Se envía la trasacción al agente/generador
     $display("Tiempo %0t Test: Se envia la primera instruccion al agente_generador-> trans_elegida= %s",$time, trans_elegida);
@@ -46,7 +46,7 @@ class test#(parameter WIDTH=16, parameter DISPOSITIVOS =2,parameter MAX_RETARDO=
     Test_Scoreboard_mbx.put(rep_elegido);
     $display("Tiempo %0t Test: Se envia la segunda instruccion al agente_scoreboard-> rep_elegido= %s",$time, rep_elegido);
 
-    #150000
+    #160000
 
     $finish;
 

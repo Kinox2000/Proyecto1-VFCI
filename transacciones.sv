@@ -35,7 +35,7 @@ class trans_agente_driver #(parameter pckg_sz=16, parameter max_retardo=10, para
   constraint const_id {id < max_dispositivos; id > 0;}
   constraint const_unique {unique {id};}
   constraint const_retardo {retardo < max_retardo; retardo > 0;}//Asegura que el retardo sea un número positivo menor al retardo máximo establecido
-  constraint const_destino {destino < dispositivos; destino > 0;}
+  constraint const_destino {destino < dispositivos; destino !=id;}
   
   
   function new(int ret = 1, int data = 0, int _id=2);//constructor de la clase
@@ -53,7 +53,8 @@ endclass
 
 class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'b1}});
 	int retardo;//retardo en ciclos de reloj que se debe esperar entre cada transacción
-	bit[pckg_sz-1:0] dato;//Este es el dato que se va a enviar a las FIFOs que se conectarán al bus
+    bit[pckg_sz-1:0] dato_enviado;//Este es el dato que se va a enviar a las FIFOs que se conectarán al bus
+    bit[pckg_sz-1:0] dato_recibido;
 	int tiempo;//Guarda el tiempo de simulación en el que se ejecuta la transacción
 	int latencia;
 	int tiempo_envio;
@@ -62,7 +63,8 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 
     function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0, envio = 0, recibido = 0, comprobacion = 0);//constructor
 	this.retardo = ret;
-	this.dato = data;
+	this.dato_enviado = data;
+    this.dato_recibido = data;
 	this.tiempo = $time;
 	this.latencia = lat;
 	this.tiempo_recibido = recibido;
@@ -71,7 +73,7 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 	endfunction
 
 	function void print(string tag = "");
-      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato, retardo,latencia);			
+      $display("Tiempo = %0t dato = 0x%0h retardo = %d latencia = %d", $time, dato_enviado, retardo,latencia);			
 	endfunction
 endclass
 
