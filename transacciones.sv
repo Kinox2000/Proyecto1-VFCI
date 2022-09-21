@@ -47,7 +47,7 @@ class trans_agente_driver #(parameter pckg_sz=16, parameter max_retardo=10, para
   endfunction
 
   function void print (string tag = "");
-      $display("Tiempo %0t Transacciones: La Transaccion es trans_agente_driver dato = %d retardo = %g D_push %d Id %g destino %d", tiempo, dato, retardo, D_push, id, destino);			
+    $display("Tiempo %0t Transacciones: La Transaccion es trans_agente_driver dato = %h retardo = %g D_push %d Id %g destino %d", tiempo, dato, retardo, D_push, id, destino);			
   endfunction
 endclass
 
@@ -60,8 +60,10 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 	int tiempo_envio;
 	int tiempo_recibido;
 	int flag_comprobacion;
+    int id;
+  	int destino;
 
-    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0, envio = 0, recibido = 0, comprobacion = 0);//constructor
+    function new(int ret = 0, int data = 0, int _time = 0, tipo_trans = Trans_paquete_comun, lat = 0, envio = 0, recibido = 0, comprobacion = 0, int ident = 0, int dest = 0);//constructor
 	this.retardo = ret;
 	this.dato_enviado = data;
     this.dato_recibido = data;
@@ -70,6 +72,8 @@ class trans_checker_scoreboard #(parameter pckg_sz=16, parameter broadcast={8{1'
 	this.tiempo_recibido = recibido;
 	this.tiempo_envio = envio;
 	this.flag_comprobacion = comprobacion;
+    this.id = ident;
+    this.destino = dest;
 	endfunction
 
 	function void print(string tag = "");

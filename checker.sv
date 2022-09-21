@@ -66,6 +66,9 @@ class Checker #(parameter pckg_sz = 16);
                       transaccion_enviada_sb.dato_recibido=trans_monitor_aux[0].dato;
                       transaccion_enviada_sb.tiempo_recibido=trans_monitor_aux[0].tiempo_recibido;
                       transaccion_enviada_sb.tiempo_envio=trans_driver_aux[j].tiempo_envio;
+                      transaccion_enviada_sb.id=trans_driver_aux[j].id;
+                      transaccion_enviada_sb.destino=trans_monitor_aux[0].destino;
+                      transaccion_enviada_sb.tiempo_recibido=trans_monitor_aux[0].tiempo_recibido;
                       if(trans_driver_aux[j].id==trans_monitor_aux[0].destino)begin
                         transaccion_enviada_sb.flag_comprobacion=1;
                       end else begin
